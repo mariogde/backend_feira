@@ -1,0 +1,110 @@
+// This is your Prisma schema file,
+// learn more about the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// => precisei usar ajuda de IA para ser mais direto nos comentarios<=
+// configuração do provedor do banco de dados
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // A url do banco de dados => .env <=
+}
+
+// "ENUM" para o status do Item <=
+// definir os possíveis estados de um item, garantindo consistência. <=
+enum StatusItem {
+  DISPONIVEL // Item pronto para ser doado/recebido
+  RESERVADO  // Item foi reservado por um beneficiário
+  ENTREGUE   // Item foi entregue ao beneficiário
+  CANCELADO  // Doação foi cancelada
+}
+
+// Modelo de Usuário
+// Representa as pessoas que interagem com o sistema (doadores e/ou beneficiários)
+model Usuario {
+  id                Int        @id @default(autoincrement()) // ID único do usuário, gerado automaticamente
+  nome              String     // Nome completo do usuário
+  cpf               String?    @unique // CPF do usuário, opcional e único (pode ser nulo)
+  email             String     @unique // Email do usuário, único e obrigatório
+  senhaHash         String     // Senha do usuário (hash para segurança)
+  telefone          String?    // Telefone do usuário, opcional
+  endereco          String?    // Endereço principal do usuário (simplificado para String)
+  dataCadastro      DateTime   @default(now()) // Data e hora do cadastro, preenchido automaticamente ao criar
+  ultimaAtividade   DateTime?  @updatedAt // Data e hora da última atualização/atividade, atualizado automaticamente
+  
+  // Relacionamentos com Itens (papéis do Doador e beneficiário)
+  // Um usuário pode doar muitos itens <= 1=N
+  itensDoacao       Item[]     @relation("ItensDoacao") 
+  // Um usuário pode receber muitos itens
+  itensRecebidos    Item[]     @relation("ItensRecebidos") 
+
+  // Relacionamentos com Mensagens (papéis de Remetente e Destinatário) <= vamos apresentar mensagem entre usuarios
+  // Um usuário pode enviar muitas mensagens
+  mensagensEnviadas Mensagem[] @relation("MensagensEnviadas")
+  // Um usuário pode receber muitas mensagens
+  mensagensRecebidas Mensagem[] @relation("MensagensRecebidas")
+}
+
+// Modelo de Categoria
+// Para organizar os itens em diferentes categorias (ex: Alimentos, Roupas, Eletrônicos)
+model Categoria {
+  id    Int    @id @default(autoincrement()) // ID único da categoria, gerado automaticamente
+  nome  String @unique // Nome da categoria, único e obrigatório
+  
+  // Relacionamento com Itens: Uma categoria pode ter muitos itens
+  itens Item[] 
+}
+
+// Modelo de Item
+// Representa os itens que estão sendo doados ou recebidos
+model Item {
+  id            Int        @id @default(autoincrement()) // ID único do item, gerado automaticamente
+  titulo        String     // Título do item (ex: "Cesta Básica", "Livros Infantis")
+  descricao     String     // Descrição detalhada do item
+  endereco      String?    // Endereço onde o item está ou será entregue, opcional (simplificado para String)
+  status        StatusItem @default(DISPONIVEL) // Status atual do item (usando o ENUM StatusItem)
+  criadoEm      DateTime   @default(now()) // Data e hora de criação do item
+  atualizadoEm  DateTime   @updatedAt // Data e hora da última atualização do item, atualizado automaticamente
+
+  // Relacionamento com Categoria: Um item pertence a uma categoria
+  categoria     Categoria  @relation(fields: [categoriaId], references: [id])
+  categoriaId   Int        // Chave estrangeira para a Categoria
+
+  // Relacionamento com Doador: Um item é doado por um usuário específico
+  doador        Usuario    @relation("ItensDoacao", fields: [doadorId], references: [id])
+  doadorId      Int        // Chave estrangeira para o Usuário que é o doador
+
+  // Relacionamento com Beneficiário: Um item pode ser recebido por um usuário (opcional)
+  // Se for nulo, significa que ainda não foi recebido ou está aguardando
+  beneficiario  Usuario?   @relation("ItensRecebidos", fields: [beneficiarioId], references: [id])
+  beneficiarioId Int?      // Chave estrangeira para o Usuário que é o beneficiário, opcional
+  
+  // Relacionamento com Mensagens: Um item pode ter muitas mensagens associadas (ex: chat sobre o item)
+  mensagens     Mensagem[]
+}
+
+// Modelo de Mensagem
+// Representa as mensagens trocadas entre usuários, possivelmente sobre um item
+model Mensagem {
+  id            Int      @id @default(autoincrement()) // ID único da mensagem, gerado automaticamente
+  conteudo      String   // Conteúdo da mensagem
+  enviadoEm     DateTime @default(now()) // Data e hora de envio da mensagem
+  atualizadoEm  DateTime @updatedAt // Data e hora da última atualização da mensagem, atualizado automaticamente
+
+  // Relacionamento com Remetente: A mensagem foi enviada por um usuário
+  remetente     Usuario  @relation("MensagensEnviadas", fields: [remetenteId], references: [id])
+  remetenteId   Int      // Chave estrangeira para o Usuário remetente
+
+  // Relacionamento com Destinatário: A mensagem foi enviada para um usuário
+  destinatario  Usuario  @relation("MensagensRecebidas", fields: [destinatarioId], references: [id])
+  destinatarioId Int     // Chave estrangeira para o Usuário destinatário
+
+  // Relacionamento com Item: A mensagem pode estar vinculada a um item específico (opcional)
+  item          Item?    @relation(fields: [itemId], references: [id])
+  itemId        Int?     // Chave estrangeira para o Item, opcional
+}
