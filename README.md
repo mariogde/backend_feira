@@ -8,13 +8,32 @@ Este repositório contém a estrutura inicial de back-end para um sistema de doa
 
 * **Node.js**: Ambiente de execução JavaScript.
 * **Prisma**: ORM (Object-Relational Mapper) para modelagem de dados e gerenciamento do banco de dados.
-* **PostgreSQL** ou **SQLite**: Banco de dados relacional para armazenamento das informações.
+* **PostgreSQL**: Banco de dados relacional para armazenamento das informações.
 
 ### Estrutura do Projeto
 
 O projeto segue uma estrutura de backend organizada, com foco na camada de dados.
 * A pasta `prisma/` contém o arquivo `schema.prisma` que define o modelo de dados, as relações entre as entidades e os enums.
 * A pasta `prisma/migrations/` armazena o histórico de migrações do banco de dados, garantindo que a estrutura do DB esteja sempre alinhada com o `schema.prisma`.
+
+### Estrutura de Pastas
+
+Abaixo, a estrutura de pastas principal do projeto:
+
+
+.
+├── .env                  # Variáveis de ambiente (ex: DATABASE_URL - IGNORADO pelo Git)
+├── .gitignore            # Arquivo que lista o que o Git deve ignorar (ex: node_modules, .env)
+├── package.json          # Metadados do projeto e lista de dependências
+├── package-lock.json     # Garante versões exatas das dependências
+├── prisma/               # Contém arquivos de configuração do Prisma
+│   ├── migrations/       # Histórico de migrações do banco de dados
+│   │   └── 20250815030254_init/ # Exemplo: Sua primeira migração (o nome da pasta varia)
+│   │       └── migration.sql # Script SQL da migração
+│   └── schema.prisma     # Definição do modelo de dados (tabelas, relações, enums)
+└── README.md             # Este arquivo de documentação
+
+*Note: A pasta `node_modules/` existe localmente, mas é ignorada pelo `.gitignore` e não é versionada no Git.*
 
 ### Modelo de Dados (`schema.prisma`)
 
@@ -53,10 +72,6 @@ Para rodar este projeto em sua máquina e replicar a estrutura do banco de dados
 
 * [Lizangelo Vasconcelos](<https://github.com/LizangeloVasconcelos>)
 * [Mário Gomes]
-* 
-* 
-* 
-* 
 
 ---
-_Nota: Na  estrutura e planejamento do projeto optamos por alguns momentos usar IA para auxiliar, pois tal ferramenta de IA generativa contribui  otimização  do processo de setup e documentação. _
+_Nota: Na estrutura e planejamento do projeto optamos por alguns momentos usar IA para auxiliar, pois tal ferramenta de IA generativa contribui otimização do processo de setup e documentação._
