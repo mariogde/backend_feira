@@ -1,5 +1,13 @@
-node_modules
-# Keep environment variables out of version control
+Dependências do Node.js
+/node_modules
+
+Variáveis de ambiente
 .env
 
-/generated/prisma
+Arquivos de log e cache
+.log
+npm-debug.log
+
+Arquivos de banco de dados locais
+*.sqlite
+/prisma/dev.db
