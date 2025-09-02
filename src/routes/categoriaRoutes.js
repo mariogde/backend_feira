@@ -1,8 +1,31 @@
+// src/routes/categoriaRoutes.js
+
 const express = require('express');
 const router = express.Router();
 
-// Este arquivo irá conter as rotas para operações CRUD de Categorias.
-// Por enquanto, ele exporta um router vazio para que app.js não dê erro.
-// A lógica de CRUD será adicionada aqui depois.
+// Importa o controller de categoria, tem a lógica de negócio (CRUD).
+const categoriaController = require('../controllers/categoriaController');
 
+// --- Define as Rotas para Categorias ---
+// Rota para listar todas as categorias
+// GET /api/categorias
+router.get('/', categoriaController.listarCategorias);
+
+// Rota busca categoria por ID
+// GET /api/categorias/:id<==
+router.get('/:id', categoriaController.buscarCategoriaPorId);
+
+// Rota cria nova categoria
+// POST /api/categorias<==
+router.post('/', categoriaController.criarCategoria);
+
+// Rota atualiza categoria existente por ID
+// PUT /api/categorias/:id<==
+router.put('/:id', categoriaController.atualizarCategoria);
+
+// Rota deleta categoria por ID
+// DELETE /api/categorias/:id
+router.delete('/:id', categoriaController.deletarCategoria);
+
+// Exporta o router para que ele possa ser usado no app.js.
 module.exports = router;

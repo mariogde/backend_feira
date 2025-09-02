@@ -1,7 +1,7 @@
 // src/models/usuarioModel.js
 
-// Este é um array em memória que simula um banco de dados.
-// Ele será substituído por um banco de dados real em um projeto maior.
+// Este array em memória  simula um banco de dados.
+// Vai ser substituído por um banco de dados real em um projeto maior.
 let usuarios = [
     {
         "id": 4,
@@ -27,24 +27,24 @@ let usuarios = [
 
 let proximoId = 5;
 
-// Função para buscar todos os usuários
+// Fun. pra buscar todos os usuários
 async function getAllUsuarios() {
     return usuarios;
 }
 
 // ----------------------------------------
-// Função para buscar um usuário por ID
+// Fun. buscar um usuário por ID
 // ----------------------------------------
 async function getUsuarioById(id) {
-    // --- CORREÇÃO IMPORTANTE: TRATA A ID COMO NÚMERO ---
-    // A função .find() é usada para encontrar um item no array.
-    // O operador === faz a verificação estrita de valor e tipo,
-    // garantindo que a ID do usuário (um número) seja comparada com o ID passado
-    // pelo controller (que já é um número graças ao parseInt()).
+    // --- Usei parseInt para "TRATAR A ID COMO NÚMERO" ---
+    // Função .find() usada para encontrar um item no array.
+    // O === faz a verificação estrita de valor e tipo,
+    // pra garantir que a ID do usuário (um número) seja comparada com o ID passado
+    // pelo controller (que agora é um número graças ao parseInt()).
     return usuarios.find(usuario => usuario.id === id);
 }
 
-// Função para buscar usuário por email
+// Fun. buscar usuário por email
 async function getUsuarioByEmail(email) {
     return usuarios.find(usuario => usuario.email === email);
 }
@@ -61,7 +61,7 @@ async function addUsuario(novoUsuario) {
     return usuario;
 }
 
-// Função para atualizar um usuário
+// Fun atualizar um usuário
 async function updateUsuario(id, dados) {
     const index = usuarios.findIndex(usuario => usuario.id === id);
     if (index !== -1) {
@@ -71,7 +71,7 @@ async function updateUsuario(id, dados) {
     return null;
 }
 
-// Função para deletar um usuário
+// Fun. deletar um usuário
 async function deleteUsuario(id) {
     const index = usuarios.findIndex(usuario => usuario.id === id);
     if (index !== -1) {

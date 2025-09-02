@@ -1,9 +1,8 @@
 // src/controllers/usuarioController.js
-
 const usuarioModel = require('../models/usuarioModel');
 
 // ----------------------------------------
-// Função para listar todos os usuários
+// Função para listar todos os usuários <===
 // ----------------------------------------
 async function listarUsuarios(req, res) {
     try {
@@ -16,13 +15,13 @@ async function listarUsuarios(req, res) {
 }
 
 // ----------------------------------------
-// Função para buscar um usuário por ID
+// Função busca um usuário por ID
 // ----------------------------------------
 async function buscarUsuarioPorId(req, res) {
     try {
         const { id } = req.params;
         
-        // --- CORREÇÃO IMPORTANTE: CONVERTE A ID PARA NÚMERO ---
+        // --- "parseInt": CONVERTE A ID PARA NÚMERO ---<===
         const usuario = await usuarioModel.getUsuarioById(parseInt(id));
 
         if (!usuario) {
@@ -36,7 +35,7 @@ async function buscarUsuarioPorId(req, res) {
 }
 
 // ----------------------------------------
-// Função para criar um novo usuário
+// Fun. criar um novo usuário
 // ----------------------------------------
 async function criarUsuario(req, res) {
     try {
@@ -69,7 +68,7 @@ async function criarUsuario(req, res) {
 }
 
 // ----------------------------------------
-// Função para atualizar um usuário
+// Fun atualizar um usuário
 // ----------------------------------------
 async function atualizarUsuario(req, res) {
     try {
@@ -93,7 +92,7 @@ async function atualizarUsuario(req, res) {
 }
 
 // ----------------------------------------
-// Função para deletar um usuário
+// Fun. deletar um usuário
 // ----------------------------------------
 async function deletarUsuario(req, res) {
     try {

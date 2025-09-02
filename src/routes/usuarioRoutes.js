@@ -1,20 +1,20 @@
 const express = require('express');
 const router = express.Router();
 
-// Importa o controller de usuário que tem a lógica de negócio (CRUD).
+// Importar o controller de usuário que tem a lógica de negócio (CRUD).
 const usuarioController = require('../controllers/usuarioController');
 
-// --- Definição das Rotas para Usuários ---
+// --- Define as Rotas para Usuários ---
 
-// Rota listar todos os usuários
-// GET /api/usuarios (o prefixo /api/usuarios está definido em app.js)
+// Rota pra listar todos os usuários
+// GET /api/usuarios (... /api/usuarios está definido em app.js)
 router.get('/', usuarioController.listarUsuarios);
 
-// Rota de busca usuário por ID
+// Rota buscar usuário por ID
 // GET /api/usuarios/:id
 router.get('/:id', usuarioController.buscarUsuarioPorId);
 
-// Rota para criação de novo usuário
+// Rota criação de novo usuário
 // POST /api/usuarios
 router.post('/', usuarioController.criarUsuario);
 
