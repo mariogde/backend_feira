@@ -1,14 +1,13 @@
-// src/routes/categoriaRoutes.js
-
+// src/routes/categoriaRoutes.js<==
 const express = require('express');
 const router = express.Router();
 
-// Importa o controller de categoria, tem a lógica de negócio (CRUD).
+// Import o controller de categoria, tem a lógica do negócio (""CRUD""").
 const categoriaController = require('../controllers/categoriaController');
 
-// --- Define as Rotas para Categorias ---
+// ---Aqui Define as Rotas para Categorias ---
 // Rota para listar todas as categorias
-// GET /api/categorias
+// GET /api/categorias<=
 router.get('/', categoriaController.listarCategorias);
 
 // Rota busca categoria por ID

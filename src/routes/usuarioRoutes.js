@@ -4,7 +4,7 @@ const router = express.Router();
 // Importar o controller de usuário que tem a lógica de negócio (CRUD).
 const usuarioController = require('../controllers/usuarioController');
 
-// --- Define as Rotas para Usuários ---
+// --- Para Definir Rotas para Usuários ---
 
 // Rota pra listar todos os usuários
 // GET /api/usuarios (... /api/usuarios está definido em app.js)
@@ -26,5 +26,5 @@ router.put('/:id', usuarioController.atualizarUsuario);
 // DELETE /api/usuarios/:id
 router.delete('/:id', usuarioController.deletarUsuario);
 
-// Exporta o router para ser usado no app.js.
+// Exporta o router pra usar no app.js.
 module.exports = router;
