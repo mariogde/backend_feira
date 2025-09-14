@@ -1,6 +1,5 @@
 // src/controllers/usuarioController.js<=
 const usuarioModel = require('../models/usuarioModel');
-
 // Listar todos os usuários
 async function listarUsuarios(req, res) {
   try {
@@ -24,34 +23,65 @@ async function buscarUsuarioPorId(req, res) {
     res.status(200).json(usuario);
   } catch (error) {
     console.error("Erro ao buscar usuário por ID:", error);
-    res.status(500).json({ message: "Erro interno do servidor." });
+    res.status(500).json({ message: "Erro interno do servidor." })
   }
 }
 
 // Criar novo usuário
 async function criarUsuario(req, res) {
   try {
-    const { nome, email, senhaHash } = req.body;
+    const { nome, email, senhaHash, cpf } = req.body;
 
     if (!nome || !email || !senhaHash) {
       return res.status(400).json({ message: "Nome, email e senha são obrigatórios." });
     }
 
+    //validar nome
+    if(nome){
+      const resultadoNome = await usuarioModel.validarNome(nome);
+      if(!resultadoNome.valido){
+        return res.status(400).json({message: resultadoNome.mensagem});
+      }
+    }
+
+    // Validação de CPF antes de criar o usuário
+    if (cpf) {
+      const resultadoCpf = await usuarioModel.validarCPF(cpf);
+      if (!resultadoCpf.valido) {
+        return res.status(400).json({ message: resultadoCpf.mensagem });
+      }
+    }
+
+    // Verifica se email já existe
     const usuarioExistente = await usuarioModel.getUsuarioByEmail(email);
     if (usuarioExistente) {
       return res.status(409).json({ message: "E-mail já cadastrado." });
     }
 
-    const novoUsuario = await usuarioModel.addUsuario(req.body);
+    // Tenta criar o usuário
+    let novoUsuario;
+    try {
+      novoUsuario = await usuarioModel.addUsuario(req.body);
+    } catch (error) {
+      // Captura o erro de CPF duplicado
+      if (error.code === 'P2002' && error.meta.target.includes('cpf')) {
+        return res.status(409).json({ message: "CPF já cadastrado." });
+      }
+      throw error; // repassa outros erros
+    }
+
     res.status(201).json({
       message: "Usuário criado com sucesso!",
       usuario: novoUsuario
     });
+
   } catch (error) {
     console.error("Erro ao criar usuário:", error);
     res.status(500).json({ message: "Erro interno do servidor." });
   }
 }
+
+
 
 // Atualizar usuário
 async function atualizarUsuario(req, res) {
@@ -62,6 +92,22 @@ async function atualizarUsuario(req, res) {
     if (!usuarioExistente) {
       return res.status(404).json({ message: "Usuário não encontrado para atualização." });
     }
+    //validar cpf se for enviado
+    if (req.body.cpf) {
+      const resultado = await usuarioModel.validarCPF(req.body.cpf); // ⚠ chama via model
+      if (!resultado.valido) {
+      return res.status(400).json({ message: resultado.mensagem });
+      }
+    }
+
+    //validar nome 
+    if(req.body.nome){
+        const resultadoNome = await usuarioModel.validarNome(req.body.nome); // função do model
+        if (!resultadoNome.valido) {
+          return res.status(400).json({ message: resultadoNome.mensagem });
+        }
+      }
+
 
     const usuarioAtualizado = await usuarioModel.updateUsuario(Number(id), req.body);
     res.status(200).json({

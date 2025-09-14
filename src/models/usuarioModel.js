@@ -45,6 +45,53 @@ async function addUsuario(dados) {
   });
 }
 
+//validar CPF
+
+const validarCPF = async (cpf) => {
+  if (!cpf) {
+    return { valido: true, mensagem: 'CPF não informado (opcional)' };
+  }
+
+  const cpfLimpo = cpf.replace(/\D/g, '');
+
+  if (cpfLimpo.length !== 11) {
+    return { valido: false, mensagem: 'CPF deve ter 11 dígitos' };
+  }
+
+  if (/^(\d)\1+$/.test(cpfLimpo)) {
+    return { valido: false, mensagem: 'CPF inválido' };
+  }
+
+  
+  // Verificar se já existe no banco
+  const usuarioExistente = await prisma.usuario.findUnique({
+    where: { cpf: cpfLimpo },
+  });
+
+  if (usuarioExistente) {
+    return { valido: false, mensagem: 'CPF já está em uso' };
+  }
+
+  return { valido: true, mensagem: 'CPF válido e disponível' };
+};
+
+//----------------------------------------------
+//Validar Nome
+//----------------------------------------------
+
+async function validarNome(nome) {
+  if(nome.length < 3){
+    return {valido:false,mensagem:"Nome muito curto. Mínimo 3 caracteres"};
+  }
+
+  if(nome.length > 50){
+    return {valido:false,mensagem:"Nome muito Longo. Máximo 50 caractere "};
+  }
+
+  return {valido:true,mensagem:"Nome válido"};
+  
+}
+
 // ----------------------------------------
 // Atualizar usuário
 // ----------------------------------------
@@ -74,4 +121,6 @@ module.exports = {
   addUsuario,
   updateUsuario,
   deleteUsuario,
+  validarCPF,
+  validarNome,
 };
