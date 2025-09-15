@@ -74,6 +74,16 @@ const validarCPF = async (cpf) => {
 
   return { valido: true, mensagem: 'CPF válido e disponível' };
 };
+//verificar se cpf existe
+
+async function getUsuarioByCPF(cpf) {
+  if(!cpf) return null; //CPF não informado
+    return await prisma.usuario.findUnique({
+    where: { cpf: cpf },
+  });
+}
+
+
 
 //----------------------------------------------
 //Validar Nome
@@ -122,5 +132,6 @@ module.exports = {
   updateUsuario,
   deleteUsuario,
   validarCPF,
+  getUsuarioByCPF,
   validarNome,
 };

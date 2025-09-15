@@ -51,6 +51,15 @@ async function criarUsuario(req, res) {
         return res.status(400).json({ message: resultadoCpf.mensagem });
       }
     }
+    //verificar se CPF já existe
+    console.log("DEBUG cpf recebido:", cpf);
+
+    const CpfExistente = await usuarioModel.getUsuarioByCPF(cpf);
+    console.log("DEBUG CpfExistente:", CpfExistente);
+
+    if (CpfExistente) {
+      return res.status(409).json({ message: "CPF já cadastrado." });
+    }
 
     // Verifica se email já existe
     const usuarioExistente = await usuarioModel.getUsuarioByEmail(email);
@@ -94,10 +103,15 @@ async function atualizarUsuario(req, res) {
     }
     //validar cpf se for enviado
     if (req.body.cpf) {
-      const resultado = await usuarioModel.validarCPF(req.body.cpf); // ⚠ chama via model
+      const resultado = await usuarioModel.validarCPF(req.body.cpf); 
       if (!resultado.valido) {
       return res.status(400).json({ message: resultado.mensagem });
       }
+
+      const cpfExistente = await usuarioModel.getUsuarioByCPF(req.body.cpf);
+      if (cpfExistente && cpfExistente.id !== Number(id)) {
+      return res.status(409).json({ message: "CPF já cadastrado." });
+  }
     }
 
     //validar nome 
