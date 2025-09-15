@@ -1,5 +1,33 @@
+//import bcrypt e jsonwebton
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
 // src/controllers/usuarioController.js<=
 const usuarioModel = require('../models/usuarioModel');
+
+/*
+  ===================INICIO DA FUNÇÃO AUXILIAR============
+  =====================ASSINATURA DO TOKEN================
+*/
+function gerarToken(usuario){
+  return jwt.sign(
+    {
+      sub:usuario.id,  //subject -> id do usuario
+      email: usuario.email 
+
+    },
+    process.env.JWT_SECRET, // Chave secreta .env 
+    { expiresIn: process.env.JWT_EXPIRES_IN || '1d'} 
+     
+  );
+}
+
+
+
+/*
+  ===================FIM DA FUNÇÃO AUXILIAR============
+*/
+
 // Listar todos os usuários
 async function listarUsuarios(req, res) {
   try {
@@ -12,6 +40,7 @@ async function listarUsuarios(req, res) {
 }
 
 // Buscar um usuário por ID
+/*
 async function buscarUsuarioPorId(req, res) {
   try {
     const { id } = req.params;
@@ -25,14 +54,36 @@ async function buscarUsuarioPorId(req, res) {
     console.error("Erro ao buscar usuário por ID:", error);
     res.status(500).json({ message: "Erro interno do servidor." })
   }
+}*/
+async function buscarUsuarioPorId(req, res) {
+  try {
+    const { id } = req.params;
+    const idNum = Number(id);
+
+    if (!id || isNaN(idNum)) {
+      return res.status(400).json({ message: 'ID inválido.' });
+    }
+
+    const usuario = await usuarioModel.getUsuarioById(idNum);
+
+    if (!usuario) {
+      return res.status(404).json({ message: 'Usuário não encontrado.' });
+    }
+
+    res.status(200).json(usuario);
+  } catch (error) {
+    console.error("Erro ao buscar usuário por ID:", error);
+    res.status(500).json({ message: "Erro interno do servidor." });
+  }
 }
 
-// Criar novo usuário
+
+// ===================Criar novo usuário==============
 async function criarUsuario(req, res) {
   try {
-    const { nome, email, senhaHash, cpf } = req.body;
+    const { nome, email, senha, cpf } = req.body;
 
-    if (!nome || !email || !senhaHash) {
+    if (!nome || !email || !senha) {
       return res.status(400).json({ message: "Nome, email e senha são obrigatórios." });
     }
 
@@ -67,10 +118,20 @@ async function criarUsuario(req, res) {
       return res.status(409).json({ message: "E-mail já cadastrado." });
     }
 
+    //Gerar hash da senha
+    
+    const senhaCript = await bcrypt.hash(senha, 10);
+
+
     // Tenta criar o usuário
     let novoUsuario;
     try {
-      novoUsuario = await usuarioModel.addUsuario(req.body);
+      novoUsuario = await usuarioModel.addUsuario({
+     ...req.body,              // pega todos os outros campos
+     senhaHash: senhaCript// substitui a senha pelo hash
+
+      });
+      
     } catch (error) {
       // Captura o erro de CPF duplicado
       if (error.code === 'P2002' && error.meta.target.includes('cpf')) {
@@ -157,5 +218,53 @@ module.exports = {
   buscarUsuarioPorId,
   criarUsuario,
   atualizarUsuario,
-  deletarUsuario
+  deletarUsuario,
+  login
 };
+
+
+/*
+  =============METODO DE LOGIN=============
+  ================TIPO POST================
+  POST/ usuario/login{email/senha}
+  
+*/
+
+async function login(req, res) {
+  const{email, senha} = req.body; 
+
+  //validar presença dos campos
+  if (!email || !senha) {
+  return res.status(400).json({ erro: 'Email e senha obrigatórios' });
+  }
+
+  //Buscar úsuario no banco pelo email via model
+  const usuario = await usuarioModel.getUsuarioByEmail(email);
+
+  //Se não encontrou ou não tem hash se senha -> credenciais invalidas
+  if(!usuario || !usuario.senhaHash){
+    return res.status(400).json({erro: 'Credenciais inválidas.'});
+  }
+
+  //Comparar senha enviada com o hash armazenado
+  const ok = await bcrypt.compare(senha,usuario.senhaHash);
+  if(!ok){
+    return res.status(400).json({erro: 'Credenciais inválidas.'});
+  }
+
+  //Gerar o token JWT
+
+  const token = gerarToken(usuario);
+
+  //Responder com token + dados 
+  return res.json({
+    token, 
+    usuario:{
+      id: usuario.id,
+      email: usuario.email,
+    }
+  });
+
+}
+
+

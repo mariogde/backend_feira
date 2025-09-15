@@ -26,5 +26,9 @@ router.put('/:id', usuarioController.atualizarUsuario);
 // DELETE /api/usuarios/:id
 router.delete('/:id', usuarioController.deletarUsuario);
 
+
+//--Rota de login--
+router.post('/login',usuarioController.login);
+
 // Exporta o router pra usar no app.js.
 module.exports = router;
