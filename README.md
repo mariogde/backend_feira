@@ -77,7 +77,7 @@ Para rodar este projeto em sua máquina e replicar a estrutura do banco de dados
     **01/09: API inicial com CRUD:**
     *Mário Gomes 
     *Lizangelo
-    *Nessa fase também foi utilizado um repositório a parte para commit de algumas tarefas, [clique neste repositório](https://github.com/mariogde/testebackend_feira "clique para visualização").
+    *Nessa fase também foi utilizado um repositório a parte para commit de algumas tarefas, [clique neste repositório](<https://github.com/mariogde/testebackend_feira> "clique para visualização").
 
     
     **08/09: Autenticação JWT e validações:**
@@ -89,10 +89,11 @@ Para rodar este projeto em sua máquina e replicar a estrutura do banco de dados
     *Raimunda Nonata*
     
 
-### Autores
+### Autoria
 
 * [Lizangelo Vasconcelos](<https://github.com/LizangeloVasconcelos>)
 * [Mário Gomes]
+* Auxilio de Inteligência Artificial
 
 ---
 _Nota: Na estrutura e planejamento do projeto optamos por alguns momentos usar IA para auxiliar, pois tal ferramenta de IA generativa contribui otimização do processo de setup e documentação._
