@@ -77,6 +77,7 @@ Para rodar este projeto em sua máquina e replicar a estrutura do banco de dados
     **01/09: API inicial com CRUD:**
     *Mário Gomes 
     *Lizangelo
+    *Nessa fase também foi utilizado um repositório a parte para commit de algumas tarefas, [clique neste repositório](https://github.com/mariogde/testebackend_feira "clique para visualização").
 
     
     **08/09: Autenticação JWT e validações:**
