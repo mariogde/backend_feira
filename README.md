@@ -67,6 +67,26 @@ Para rodar este projeto em sua máquina e replicar a estrutura do banco de dados
 
 6.  **Gere o Prisma Client:**
     * `npx prisma generate`
+  
+### Divisão de tarefas
+
+    **13/08: Modelo de dados (ER + Prisma Schema):**
+    *Mário Gomes (Modelagem ER)
+    *Lizangelo (Schema Prisma)
+    
+    **01/09: API inicial com CRUD:**
+    *Mário Gomes 
+    *Lizangelo
+
+    
+    **08/09: Autenticação JWT e validações:**
+    *Raimunda Nonata*
+    *Nayla Moraes*
+    
+    **15/09: Integração final backend-frontend com testes completos**
+    *Nayla Moraes*
+    *Raimunda Nonata*
+    
 
 ### Autores
 
