@@ -231,40 +231,56 @@ module.exports = {
 */
 
 async function login(req, res) {
-  const{email, senha} = req.body; 
+  const { email, senha } = req.body;
 
-  //validar presença dos campos
+  console.log('Login solicitado para email:', email);
+
   if (!email || !senha) {
-  return res.status(400).json({ erro: 'Email e senha obrigatórios' });
+    console.log('Faltando email ou senha');
+    return res.status(400).json({ erro: 'Email e senha obrigatórios' });
   }
 
-  //Buscar úsuario no banco pelo email via model
-  const usuario = await usuarioModel.getUsuarioByEmail(email);
-
-  //Se não encontrou ou não tem hash se senha -> credenciais invalidas
-  if(!usuario || !usuario.senhaHash){
-    return res.status(400).json({erro: 'Credenciais inválidas.'});
+  let usuario;
+  try {
+    usuario = await usuarioModel.getUsuarioByEmail(email);
+  } catch (error) {
+    console.error('Erro ao buscar usuário pelo email:', error);
+    return res.status(500).json({ erro: 'Erro interno do servidor.' });
   }
 
-  //Comparar senha enviada com o hash armazenado
-  const ok = await bcrypt.compare(senha,usuario.senhaHash);
-  if(!ok){
-    return res.status(400).json({erro: 'Credenciais inválidas.'});
+  if (!usuario || !usuario.senhaHash) {
+    console.log('Usuário não encontrado ou senhaHash ausente');
+    return res.status(400).json({ erro: 'Credenciais inválidas.' });
   }
 
-  //Gerar o token JWT
+  let ok;
+  try {
+    ok = await bcrypt.compare(senha, usuario.senhaHash);
+  } catch (error) {
+    console.error('Erro ao comparar senha:', error);
+    return res.status(500).json({ erro: 'Erro interno do servidor.' });
+  }
 
-  const token = gerarToken(usuario);
+  if (!ok) {
+    console.log('Senha inválida');
+    return res.status(400).json({ erro: 'Credenciais inválidas.' });
+  }
 
-  //Responder com token + dados 
+  let token;
+  try {
+    token = gerarToken(usuario);
+  } catch (error) {
+    console.error('Erro ao gerar token JWT:', error);
+    return res.status(500).json({ erro: 'Erro interno do servidor.' });
+  }
+
+  console.log('Login bem sucedido para usuário:', usuario.email);
+
   return res.json({
-    token, 
-    usuario:{
+    token,
+    usuario: {
       id: usuario.id,
       email: usuario.email,
-    }
+    },
   });
-
 }
-
-

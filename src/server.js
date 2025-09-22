@@ -1,3 +1,6 @@
+// No topo do seu server.js ou app.js
+require('dotenv').config();
+
 // src/server.js
 const app = require('./app'); // importa o app.js<==
 const PORT = 3000; // ou process.env.PORT, se usar variáveis de ambiente
